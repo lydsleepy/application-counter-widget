@@ -21,11 +21,11 @@ class Storage:
                     'total': DEFAULT_TOTAL,
                     'current': DEFAULT_CURRENT
                 }
-            else:
-                return {
-                    'total': DEFAULT_TOTAL,
-                    'current': DEFAULT_CURRENT
-                }
+        else:
+            return {
+                'total': DEFAULT_TOTAL,
+                'current': DEFAULT_CURRENT
+            }
         
     @staticmethod
     def save_data(total, current):

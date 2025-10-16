@@ -117,7 +117,7 @@ class CounterWidget:
             text=self.counter.get_remaining_text(),
             font=LABEL_FONT,
             bg=BG_COLOR,
-            fg-FG_COLOR if self.counter.get_remaining() > 0 else ACCENT_COLOR
+            fg=FG_COLOR if self.counter.get_remaining() > 0 else ACCENT_COLOR
         )
         self.remaining_label.pack(pady=10)
 
@@ -133,7 +133,7 @@ class CounterWidget:
             activeforeground=FG_COLOR,
             relief=tk.FLAT,
             command=self._open_settings
-        )
+            )
         settings_btn.place(relx=0.95, rely-0.95, anchor=tk.SE)
 
     def _on_increment(self):

@@ -8,7 +8,7 @@ class CounterWidget:
 
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("WINDOW_TITLE")
+        self.root.title(WINDOW_TITLE)
         self.root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
         self.root.attributes('-topmost', ALWAYS_ON_TOP)
         
@@ -17,7 +17,7 @@ class CounterWidget:
         self.root.configure(bg=BG_COLOR)
         
         self.counter = Counter()
-        self.create_ui()
+        self.setup_ui()
     
     def setup_ui(self):
         # initializes ui components
@@ -55,7 +55,7 @@ class CounterWidget:
         minus_btn.pack(side=tk.LEFT, padx=5)
 
         # counter entry
-        self.counter_var = tk.StringVar(value=str(self.counter.current))
+        self.current_var = tk.StringVar(value=str(self.counter.current))
         current_entry = tk.Entry(
             counter_frame,
             textvariable=self.current_var,
@@ -94,6 +94,9 @@ class CounterWidget:
             relief=tk.FLAT,
             insertbackground=ACCENT_COLOR
         )
+        total_entry.pack(side=tk.LEFT, padx=2)
+        total_entry.bind("<Return>", self._on_total_update)
+        total_entry.bind("<FocusOut>", self._on_total_update)
 
         # plus button
         plus_btn = tk.Button(
@@ -134,7 +137,7 @@ class CounterWidget:
             relief=tk.FLAT,
             command=self._open_settings
             )
-        settings_btn.place(relx=0.95, rely-0.95, anchor=tk.SE)
+        settings_btn.place(relx=0.95, rely=0.95, anchor=tk.SE)
 
     def _on_increment(self):
     # handles increment button click
@@ -154,7 +157,7 @@ class CounterWidget:
     def _on_total_update(self, event=None):
     # handles total value updates
         self.counter.set_total(self.total_var.get())
-        self.update_display()
+        self._update_display()
 
     def _update_display(self):
     # handles updating the display
@@ -189,7 +192,7 @@ class CounterWidget:
             textvariable=total_var,
             font=("Consolas", 14),
             width=10,
-            justify=tk.Center,
+            justify=tk.CENTER,
             bg=BUTTON_COLOR,
             fg=FG_COLOR
         )

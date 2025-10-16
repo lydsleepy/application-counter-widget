@@ -1,11 +1,33 @@
-from storage import Storage
-Storage.save_data(200, 50)
-data = Storage.load_data()
-print(data)
+import json
+import os
+from config import CONFIG_FILE, DEFAULT_CURRENT, DEFAULT_TOTAL
 
-"""if __name__ == "__main__":
-    print("Testing Storage Module")
-    Storage.save_data(200, 50)
-    data = Storage.load_data()
-    print(data)
-    print("Test Complete")"""
+class Storage:
+    # handles saving and loading counter data
+    if os.path.exists(CONFIG_FILE):
+        try:
+            with open(CONFIG_FILE, 'r') as f:
+                data = json.load(f)
+                return {
+                    'total': data.get('total', DEFAULT_TOTAL),
+                    'current': data.get('current', DEFAULT_CURRENT)
+                }
+        except (json.JSONDecodeError, IOError):
+            return {
+                'total': DEFAULT_TOTAL,
+                'current': DEFAULT_CURRENT
+            }
+        else:
+            return {
+                'total': DEFAULT_TOTAL,
+                'current': DEFAULT_CURRENT
+            }
+        
+@staticmethod
+def save_data(total, current):
+    # saves the counter data to a json file
+    try:
+        with open(CONFIG_FILE, 'w') as f:
+            json.dump({'total': total, 'current': current}, f, indent=2)
+    except IOError as e:
+        print(f"Error saving data: {e}")

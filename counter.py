@@ -58,6 +58,7 @@ class Counter:
 
     def get_remaining_text(self):
     # formatted remaining string
+        self.remaining = Counter.get_remaining(self)
         if self.remaining < 0:
             return f"{abs(self.remaining)} OVER THE GOAL!!!"
         elif self.remaining == 0:

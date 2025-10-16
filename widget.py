@@ -55,21 +55,45 @@ class CounterWidget:
         minus_btn.pack(side=tk.LEFT, padx=5)
 
         # counter entry
-        self.counter_var = tk.StringVar(value=self.counter.get_progress_text())
-        self.counter_entry = tk.Entry(
+        self.counter_var = tk.StringVar(value=str(self.counter.current))
+        current_entry = tk.Entry(
             counter_frame,
-            textvariable=self.counter_var,
+            textvariable=self.current_var,
             font=COUNTER_FONT,
-            width=10,
+            width=4,
             justify=tk.CENTER,
             bg=BUTTON_COLOR,
             fg=FG_COLOR,
             relief=tk.FLAT,
             insertbackground=ACCENT_COLOR
         )
-        self.counter_entry.pack(side=tk.LEFT, padx=5)
-        self.counter_entry.bind("<Return>", self._on_entry_update)
-        self.counter_entry.bind("<FocusOut>", self._on_entry_update)
+        current_entry.pack(side=tk.LEFT, padx=2)
+        current_entry.bind("<Return>", self._on_current_update)
+        current_entry.bind("<FocusOut>", self._on_current_update)
+
+        # slash label
+        slash_label = tk.Label(
+            counter_frame,
+            text="/",
+            font=COUNTER_FONT,
+            bg=BG_COLOR,
+            fg=FG_COLOR
+        )
+        slash_label.pack(side=tk.LEFT)
+
+        # total counter entry
+        self.total_var = tk.StringVar(value=str(self.counter.total))
+        total_entry = tk.Entry(
+            counter_frame,
+            textvariable=self.total_var,
+            font=COUNTER_FONT,
+            width=4,
+            justify=tk.CENTER,
+            bg=BUTTON_COLOR,
+            fg=FG_COLOR,
+            relief=tk.FLAT,
+            insertbackground=ACCENT_COLOR
+        )
 
         # plus button
         plus_btn = tk.Button(
@@ -122,4 +146,74 @@ class CounterWidget:
         self.counter.decrement()
         self._update_display()
 
-# incomplete
+    def _on_current_update(self, event=None):
+    # handles current value updates
+        self.counter.set_current(self.current_var.get())
+        self._update_display()
+
+    def _on_total_update(self, event=None):
+    # handles total value updates
+        self.counter.set_total(self.total_var.get())
+        self.update_display()
+
+    def _update_display(self):
+    # handles updating the display
+    # aka refreshing all of the display elements
+        self.current_var.set(str(self.counter.current))
+        self.total_var.set(str(self.counter.total))
+        self.remaining_label.config(
+            text=self.counter.get_remaining_text(),
+            fg=ACCENT_COLOR if self.counter.get_remaining() == 0 else FG_COLOR
+        )
+    
+    def _open_settings(self):
+    # opens the settings... yeah
+        settings_win = tk.Toplevel(self.root)
+        settings_win.title("Settings")
+        settings_win.geometry("300x150")
+        settings_win.configure(bg=BG_COLOR)
+        settings_win.transient(self.root)
+        settings_win.grab_set()
+
+        tk.Label(
+            settings_win,
+            text="Set total goal:",
+            font=SETTINGS_FONT,
+            bg=BG_COLOR,
+            fg=FG_COLOR,
+        ).pack(pady=20)
+
+        total_var = tk.StringVar(value=str(self.counter.total))
+        total_entry = tk.Entry(
+            settings_win,
+            textvariable=total_var,
+            font=("Consolas", 14),
+            width=10,
+            justify=tk.Center,
+            bg=BUTTON_COLOR,
+            fg=FG_COLOR
+        )
+        total_entry.pack(pady=10)
+
+        # nested function!!!
+        def save_settings():
+            if self.counter.set_total(total_var.get()):
+                self._update_display()
+                settings_win.destroy()
+            else:
+                messagebox.showerror("ERROR", "Please enter a number greater than 0")
+
+        tk.Button(
+            settings_win,
+            text="Save",
+            font=("Consolas", 11),
+            bg=ACCENT_COLOR,
+            fg="#000000",
+            activebackground="#00cc6a",
+            relief=tk.FLAT,
+            command=save_settings
+        ).pack(pady=10)
+        
+    def run(self):
+    # runs / starts the widget
+        self.root.mainloop()
